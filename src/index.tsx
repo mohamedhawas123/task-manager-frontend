@@ -1,17 +1,39 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
+import { createStore, combineReducers, compose  ,applyMiddleware} from 'redux';
+import ReactDOM from 'react-dom';
+import taskReducer from '../src/store/reducer/task'
+import userReducer from '../src/store/reducer/user'
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-root.render(
-  <React.StrictMode>
+
+declare global {
+  interface Window {
+    __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
+  }
+}
+
+const composeEnhances = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+
+const rootReducer = combineReducers({
+  tasks: taskReducer,
+  user: userReducer
+  
+})
+
+const store = createStore(rootReducer, composeEnhances(applyMiddleware(thunk)))
+
+const app = (
+  <Provider store={store}>
     <App />
-  </React.StrictMode>
-);
+  </Provider>
+)
+
+ReactDOM.render(app, document.getElementById('root'))
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
